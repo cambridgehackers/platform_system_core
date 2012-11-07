@@ -54,13 +54,15 @@ static int ion_ioctl(int fd, int req, void *arg)
         return ret;
 }
 
-int ion_alloc(int fd, size_t len, size_t align, unsigned int flags,
+int ion_alloc(int fd, size_t len, size_t align, unsigned int heap_mask,
+              unsigned int flags,
               struct ion_handle **handle)
 {
         int ret;
         struct ion_allocation_data data = {
                 .len = len,
                 .align = align,
+                .heap_mask = heap_mask,
                 .flags = flags,
         };
 
@@ -86,7 +88,7 @@ int ion_map(int fd, struct ion_handle *handle, size_t length, int prot,
                 .handle = handle,
         };
 
-        int ret = ion_ioctl(fd, ION_IOC_MAP, &data);
+        int ret = ion_ioctl(fd, ION_IOC_SHARE, &data);
         if (ret < 0)
                 return ret;
         *map_fd = data.fd;

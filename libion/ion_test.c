@@ -18,6 +18,7 @@
 size_t len = 1024*1024, align = 0;
 int prot = PROT_READ | PROT_WRITE;
 int map_flags = MAP_SHARED;
+int heap_mask = 1;
 int alloc_flags = 0;
 int test = -1;
 size_t width = 1024*1024, height = 1024*1024;
@@ -31,7 +32,7 @@ int _ion_alloc_test(int *fd, struct ion_handle **handle)
 	if (*fd < 0)
 		return *fd;
 
-	ret = ion_alloc(*fd, len, align, alloc_flags, handle);
+	ret = ion_alloc(*fd, len, align, heap_mask, alloc_flags, handle);
 
 	if (ret)
 		printf("%s failed: %s\n", __func__, strerror(ret));
@@ -203,6 +204,7 @@ int main(int argc, char* argv[]) {
 		static struct option opts[] = {
 			{"alloc", no_argument, 0, 'a'},
 			{"alloc_flags", required_argument, 0, 'f'},
+			{"heap_mask", required_argument, 0, 'H'},
 			{"map", no_argument, 0, 'm'},
 			{"share", no_argument, 0, 's'},
 			{"len", required_argument, 0, 'l'},
@@ -244,6 +246,9 @@ int main(int argc, char* argv[]) {
 			break;
 		case 'f':
 			alloc_flags = atol(optarg);
+			break;
+		case 'H':
+			heap_mask = atol(optarg);
 			break;
 		case 'a':
 			test = ALLOC_TEST;
